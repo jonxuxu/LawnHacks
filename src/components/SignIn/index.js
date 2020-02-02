@@ -1,17 +1,24 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+import { Container, Form, Button, Card } from 'react-bootstrap';
 
 import { SignUpLink } from '../SignUp';
+import { PasswordForgetLink } from '../PasswordForget';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
-  <div>
-    <h1>SignIn</h1>
-    <SignInForm />
-    <SignUpLink />
-  </div>
+  <Container>
+    <Card style={{ width: '20rem' }}>
+      <Card.Body>
+        <Card.Title>Sign In</Card.Title>
+        <SignInForm />
+        <PasswordForgetLink />
+        <SignUpLink />
+      </Card.Body>
+    </Card>
+  </Container>
 );
 
 const INITIAL_STATE = {
@@ -53,26 +60,32 @@ class SingInFormBase extends Component {
     const isInvalid = password === '' || email === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="email"
-          placeholder="Email Address"
-        />
-        <input
-          name="password"
-          value={password}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <button disabled={isInvalid} type="submit">
+      <Form onSubmit={this.onSubmit}>
+        <Form.Group>
+          <Form.Control
+            name="email"
+            value={email}
+            onChange={this.onChange}
+            type="email"
+            placeholder="Email Address"
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Control
+            name="password"
+            value={password}
+            onChange={this.onChange}
+            type="password"
+            placeholder="Password"
+          />
+        </Form.Group>
+
+        <Button disabled={isInvalid} type="submit">
           Sign In
-        </button>
+        </Button>
         {error && <p>{error.message}</p>}
-      </form>
+      </Form>
     );
   }
 }

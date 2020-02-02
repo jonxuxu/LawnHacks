@@ -1,10 +1,14 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
 
-const Home = () => (
+import { withAuthorization } from '../Session';
+
+const HomePage = () => (
     <Container>
         <h1>Home</h1>
     </Container>
-)
+);
 
-export default Home;
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(HomePage);
