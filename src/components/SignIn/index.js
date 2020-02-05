@@ -10,9 +10,9 @@ import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
   <Container>
-    <Card style={{ width: '20rem' }}>
+    <Card style={{ width: '25rem' }}>
       <Card.Body>
-        <Card.Title>Sign In</Card.Title>
+        <h3>Sign In</h3>
         <SignInForm />
         <PasswordForgetLink />
         <SignUpLink />
