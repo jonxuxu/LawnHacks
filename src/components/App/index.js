@@ -19,8 +19,8 @@ const App = () => (
     <Router>
         <div>
             <Navigation />
-            <div style={{ paddingTop: '70px' }}>
-                <Route exact path={ROUTES.LANDING} component={LandingPage} />
+            <Route exact path={ROUTES.LANDING} component={LandingPage} />
+            <div style={{ paddingTop: "56px" }}>
                 <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
                 <Route path={ROUTES.SIGN_IN} component={SignInPage} />
                 <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />

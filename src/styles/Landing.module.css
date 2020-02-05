@@ -1,0 +1,11 @@
+.landingBackground{
+    background-image: url("https://images.unsplash.com/photo-1489065094455-c2d576ff27a0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80");
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    padding-top: calc(56px + 20vh);
+}
+
+.introText{
+    max-width: 30rem;
+}

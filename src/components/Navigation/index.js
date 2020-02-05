@@ -25,7 +25,7 @@ const Navigation = () => (
 const NavigationAuth = ({ authUser }) => (
     <Navbar bg="dark" variant="dark" fixed="top" expand="lg">
         <Container className="w-75">
-            <Navbar.Brand>LawnHacks</Navbar.Brand>
+            <Navbar.Brand as={Link} to={ROUTES.LANDING}>LawnHacks</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto">
@@ -45,7 +45,7 @@ const NavigationAuth = ({ authUser }) => (
 const NavigationNonAuth = () => (
     <Navbar bg="dark" variant="dark" fixed="top" expand="lg">
         <Container className="w-75">
-            <Navbar.Brand>LawnHacks</Navbar.Brand>
+            <Navbar.Brand as={Link} to={ROUTES.LANDING}>LawnHacks</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto">

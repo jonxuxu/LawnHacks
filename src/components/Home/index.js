@@ -1,12 +1,13 @@
 import React from 'react';
-import { Container } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
 import { withAuthorization } from '../Session';
 
 const HomePage = () => (
-    <Container>
-        <h1>Home</h1>
-    </Container>
+    <div className="p-5">
+        <h1>Your Dashboard</h1>
+        {/*https://demos.creative-tim.com/material-dashboard-react/#/admin/dashboard */}
+    </div>
 );
 
 const condition = authUser => !!authUser;

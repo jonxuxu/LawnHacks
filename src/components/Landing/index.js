@@ -1,11 +1,21 @@
 import React from 'react';
-import { Container } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import * as ROUTES from '../../constants/routes';
+
+import { Container, Button } from 'react-bootstrap';
+
+import Style from '../../styles/Landing.module.css'
 
 const Landing = () => (
-    <Container>
-        <h1>Landing</h1>
-        {/* https://images.unsplash.com/photo-1489065094455-c2d576ff27a0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=3750&q=80 */}
-    </Container>
+    <div className={Style.landingBackground}>
+        <Container>
+            <div className={Style.introText}>
+                <h1>Goodbye yellow lawns!</h1>
+                <h5>Turn your everyday sprinkler into a smart, automatic lawn watering system.</h5>
+                <Button as={Link} to={ROUTES.SIGN_IN}>Get Started</Button>
+            </div>
+        </Container>
+    </div>
 )
 
 export default Landing;
