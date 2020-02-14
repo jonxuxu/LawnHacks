@@ -17,10 +17,10 @@ import { withAuthentication } from '../Session';
 
 const App = () => (
     <Router>
-        <div>
+        <div className="vh-100">
             <Navigation />
-            <Route exact path={ROUTES.LANDING} component={LandingPage} />
-            <div style={{ paddingTop: "56px" }}>
+            <div style={{ paddingTop: "56px" }} className="h-100" >
+                <Route exact path={ROUTES.LANDING} component={LandingPage} />
                 <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
                 <Route path={ROUTES.SIGN_IN} component={SignInPage} />
                 <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />

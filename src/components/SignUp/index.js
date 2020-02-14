@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
-import { Container, Card, Button, Form, Row, Col } from 'react-bootstrap';
+import { Card, Button, Form, Row, Col } from 'react-bootstrap';
 
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 import * as ROLES from '../../constants/roles';
 
 const SignUpPage = () => (
-    <Container>
+    <Row className="justify-content-center align-items-center h-100">
         <Card style={{ width: '40rem' }}>
             <Card.Body>
                 <h3>Sign Up</h3>
                 <SignUpForm />
             </Card.Body>
         </Card>
-    </Container>
+    </Row>
 );
 
 const INITIAL_STATE = {

@@ -68,6 +68,8 @@ class Firebase {
     user = uid => this.db.ref(`users/${uid}`);
     users = () => this.db.ref('users');
 
+    // Sensor API
+    sensors = uid => this.db.ref(`users/${uid}/sensors`);
 }
 
 export default Firebase;

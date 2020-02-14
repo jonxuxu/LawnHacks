@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
-import { Container, Form, Button, Card } from 'react-bootstrap';
+import { Row, Form, Button, Card } from 'react-bootstrap';
 
 import { SignUpLink } from '../SignUp';
 import { PasswordForgetLink } from '../PasswordForget';
@@ -9,7 +9,7 @@ import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
-  <Container>
+  <Row className="justify-content-center align-items-center h-100">
     <Card style={{ width: '25rem' }}>
       <Card.Body>
         <h3>Sign In</h3>
@@ -18,7 +18,7 @@ const SignInPage = () => (
         <SignUpLink />
       </Card.Body>
     </Card>
-  </Container>
+  </Row>
 );
 
 const INITIAL_STATE = {
