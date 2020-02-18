@@ -9,6 +9,8 @@ import {
 } from '../Session';
 import { withFirebase } from '../Firebase';
 
+import CurrentWeather from './currentWeather';
+
 import Style from '../../styles/Home.module.css';
 
 class HomePage extends Component {
@@ -57,7 +59,7 @@ class HomePage extends Component {
                     <Col lg={3} className="h-100 mb-4">
                         {loading && <div>Loading ...</div>}
                         {currentWeather ? (
-                            <CurrentInfo weather={currentWeather} />
+                            <CurrentWeather weather={currentWeather} />
                         ) : (
                                 <div>There are no weather forecasts...</div>
                             )}
@@ -88,48 +90,6 @@ class HomePage extends Component {
     }
 
 }
-
-const CurrentInfo = ({ weather }) => (
-    <Card bg="light" className="h-100">
-        <Card.Header>
-            <Card.Title>Current Weather Conditions</Card.Title>
-            <Card.Subtitle>{weather.summary}</Card.Subtitle>
-        </Card.Header>
-        <ListGroup variant="flush">
-            <ListGroup.Item>
-                Precipitation Intensity: {weather.precipIntensity} mm/h
-                <ProgressBar striped variant="info" now={(weather.precipIntensity / 125.0) * 100} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-                Precipitation Probability: {weather.precipProbability} %
-                <ProgressBar striped variant="info" now={weather.precipProbability * 100} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-                Pressure: {weather.pressure} mb
-                <ProgressBar striped variant="info" now={weather.pressure - 970} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-                Cloud Cover: {weather.cloudCover} %
-                <ProgressBar striped variant="info" now={weather.cloudCover} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-                UV Index: {weather.uvIndex}
-                <ProgressBar striped variant="info" now={weather.uvIndex * 10} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-                Wind: {weather.windSpeed}km/h, Gusts at {weather.windGust} km/h
-                <ProgressBar striped variant="info" now={(weather.windSpeed / 50.0) * 100} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-                Visibility: {weather.visibility} km
-                <ProgressBar striped variant="info" now={weather.visibility} />
-            </ListGroup.Item>
-            <ListGroup.Item>
-                Ozone: {weather.ozone} du
-            </ListGroup.Item>
-        </ListGroup>
-    </Card>
-);
 
 class SensorsBase extends Component {
     constructor(props) {
