@@ -8,6 +8,10 @@
 #define DHTPIN 2     // Digital pin connected to the DHT sensor (D4)
 #define DHTTYPE    DHT22     // DHT 22 (AM2302)
 DHT dht(DHTPIN, DHTTYPE);
+#define SOILPIN A0 // Analog pin reading soil moisture data
+#define SOILPWR 4 // Pin that powers soil sensor (D2)
+#define VALVEPIN 5 // Digital pin controlling the solenoid valve (D1)
+int valve = 0; // 0 for closed
 
 #define NTP_ADDRESS  "europe.pool.ntp.org"
 WiFiUDP ntpUDP;
@@ -40,26 +44,31 @@ void connectWifi(){
 }
 
 void readFb(){
-//  if (Firebase.getInt(firebaseData, "/red")) {
-//   if  (firebaseData.dataType() == "int") {
-//      int val = firebaseData.intData();
-//      if (val != redValue) {
-//        redValue = val;
-//        setLedColor();
-//      }
-//    }
-//  }
+  if (Firebase.getInt(firebaseData, "/users/" + fbUid + "/device/valve")) {
+   if  (firebaseData.dataType() == "int") {
+      int val = firebaseData.intData();
+      if(val != valve){
+         valve = val;
+         digitalWrite(VALVEPIN, valve);
+         Serial.print("Updated valve: ");
+         Serial.println(valve);
+      }
+    }
+  }
 }
 
-void writeFb(double temp, double humid){
+void writeFb(double temp, double humid, double soil){
   timeClient.update();
-  String epcohTime =  String(timeClient.getEpochTime());
+  String epochTime =  String(timeClient.getEpochTime());
   
   json.clear();
+  json.set("timestamp", epochTime);
   json.set("temperature", temp);
   json.set("humidity", humid);
+  json.set("soil", soil);
+  json.set("valve", valve);
   
-  if (Firebase.set(firebaseData, "/users/" + fbUid + "/sensors/" + epcohTime, json)){
+  if (Firebase.set(firebaseData, "/users/" + fbUid + "/device", json)){
       Serial.println("WRITE PASSED");
       Serial.println("PATH: " + firebaseData.dataPath());
       Serial.println("TYPE: " + firebaseData.dataType());
@@ -92,8 +101,11 @@ void setup() {
   
   // Initialize sensors
   dht.begin();
+  pinMode(VALVEPIN, OUTPUT);
+  pinMode(SOILPWR, OUTPUT);
+  digitalWrite(VALVEPIN, LOW);
+  digitalWrite(SOILPWR, LOW);
   Serial.println("Sensors initialized");
-  
 }
 
 void loop() {
@@ -107,12 +119,20 @@ void loop() {
     Serial.println(F("Failed to read from DHT sensor!"));
     return;
   }
+  digitalWrite(SOILPWR, HIGH);
+  delay(100);
+  double s = (100-((analogRead(A0)-85)/320.0*100)); // Relative percentage of "wetness" (0 is dry, 100 is saturated, around 50 is what we need)
+  digitalWrite(SOILPWR, LOW);
 
   Serial.print("Humidity: ");
   Serial.print(h);
   Serial.print("%  Temperature: ");
   Serial.print(t);
-  Serial.println("°C ");
+  Serial.print("°C ");
+  Serial.print("Soil: ");
+  Serial.print(s);
+  Serial.println("% ");
 
-  writeFb(t, h);
+  readFb();
+  writeFb(t, h, s);
 }
