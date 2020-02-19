@@ -13,8 +13,12 @@ const AccountPage = () => (
                     <Card.Body>
                         <Card.Title>Account: {authUser.email}</Card.Title>
                         <ListGroup variant="flush">
-                            <ListGroup.Item><PasswordForgetForm /></ListGroup.Item>
-                            <ListGroup.Item><PasswordChangeForm /></ListGroup.Item>
+                            <ListGroup.Item>
+                                <PasswordForgetForm />
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <PasswordChangeForm />
+                            </ListGroup.Item>
                         </ListGroup>
                     </Card.Body>
                 </Card>

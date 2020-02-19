@@ -10,6 +10,7 @@ import {
 import { withFirebase } from '../Firebase';
 
 import CurrentWeather from './currentWeather';
+import Forecast from './forecast';
 
 import Style from '../../styles/Home.module.css';
 
@@ -45,7 +46,6 @@ class HomePage extends Component {
                     loading: false
                 });
             });
-
     }
 
     render() {
@@ -102,7 +102,7 @@ class SensorsBase extends Component {
     }
 
     componentWillUnmount() {
-        this.props.firebase.sensors(this.props.authUser).off();
+        this.props.firebase.device(this.props.authUser).off();
     }
 
     toggleValve = e => {
@@ -119,31 +119,36 @@ class SensorsBase extends Component {
 
         return (
 
-            <div>
+            <div className="h-100">
                 {loading && <div>Loading ...</div>}
                 {readings ? (
-                    <>
+                    <div className="h-100 d-flex flex-column">
                         <ReadingCard readings={readings} />
-                        <Row className="mt-4">
+                        <Row className="mt-4 flex-grow-1">
+                            <Col lg={9}>
+                                <Card bg="light" className="h-100">
+                                    <Card.Header>
+                                        <Card.Title>Weather Projections</Card.Title>
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <Forecast />
+                                    </Card.Body>
+                                </Card>
+                            </Col>
                             <Col lg={3}>
                                 <Card bg="light" className="text-center">
-                                    <Card.Body>
+                                    <Card.Header>
                                         <Card.Title>Valve Control</Card.Title>
+                                    </Card.Header>
+                                    <Card.Body>
                                         <Button variant={readings.valve == 1 ? "success" : "danger"} size="lg" onClick={this.toggleValve}>
                                             {readings.valve == 1 ? "On" : "Off"}
                                         </Button>
                                     </Card.Body>
                                 </Card>
                             </Col>
-                            <Col lg={9}>
-                                <Card bg="light">
-                                    <Card.Body>
-                                        <Card.Title>Weather Projections</Card.Title>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
                         </Row>
-                    </>
+                    </div>
                 ) : (
                         <div>There are no readings ...</div>
                     )}

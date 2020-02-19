@@ -13,6 +13,7 @@ import AdminPage from '../Admin';
 import * as ROUTES from '../../constants/routes';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../node_modules/react-vis/dist/style.css';
 import { withAuthentication } from '../Session';
 
 const App = () => (
