@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardDeck, Row, Col, Button, ListGroup, ProgressBar } from 'react-bootstrap';
+import { Card, CardDeck, Row, Col, Button } from 'react-bootstrap';
 import DarkSkyApi from 'dark-sky-api';
 
 import {
@@ -66,23 +66,6 @@ class HomePage extends Component {
                     </Col>
                     <Col className="h-100">
                         <Sensors />
-                        <Row className="mt-4">
-                            <Col lg={3}>
-                                <Card bg="light">
-                                    <Card.Body>
-                                        <Card.Title>Valve Control</Card.Title>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                            <Col lg={9}>
-                                <Card bg="light">
-                                    <Card.Body>
-                                        <Card.Title>Weather Projections</Card.Title>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        </Row>
-
                     </Col>
                 </Row>
             </div>
@@ -104,11 +87,10 @@ class SensorsBase extends Component {
     componentDidMount() {
         this.setState({ loading: true });
         console.log(this.props.authUser);
-        //this.props.firebase.sensors("BTdKUqTj03XFgji3yOiKoQMokPG2").on('value', snapshot => {
-        this.props.firebase.sensors("BTdKUqTj03XFgji3yOiKoQMokPG2").on('value', snapshot => {
+        this.props.firebase.device("BTdKUqTj03XFgji3yOiKoQMokPG2").on('value', snapshot => {
             const sensorObject = snapshot.val();
             if (sensorObject) {
-                // Connvert sensors object form snapshot
+                // Connvert sensors object from snapshot
                 this.setState({
                     readings: sensorObject,
                     loading: false,
@@ -117,12 +99,19 @@ class SensorsBase extends Component {
                 this.setState({ readings: null, loading: false })
             }
         });
-
-
     }
 
     componentWillUnmount() {
         this.props.firebase.sensors(this.props.authUser).off();
+    }
+
+    toggleValve = e => {
+        e.preventDefault();
+        const newValve = this.state.readings.valve == 1 ? 0 : 1;
+        this.props.firebase.device("BTdKUqTj03XFgji3yOiKoQMokPG2").set({
+            ...this.state.readings,
+            valve: newValve
+        });
     }
 
     render() {
@@ -133,84 +122,109 @@ class SensorsBase extends Component {
             <div>
                 {loading && <div>Loading ...</div>}
                 {readings ? (
-                    <ReadingCard readings={readings} />
+                    <>
+                        <ReadingCard readings={readings} />
+                        <Row className="mt-4">
+                            <Col lg={3}>
+                                <Card bg="light" className="text-center">
+                                    <Card.Body>
+                                        <Card.Title>Valve Control</Card.Title>
+                                        <Button variant={readings.valve == 1 ? "success" : "danger"} size="lg" onClick={this.toggleValve}>
+                                            {readings.valve == 1 ? "On" : "Off"}
+                                        </Button>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                            <Col lg={9}>
+                                <Card bg="light">
+                                    <Card.Body>
+                                        <Card.Title>Weather Projections</Card.Title>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        </Row>
+                    </>
                 ) : (
                         <div>There are no readings ...</div>
                     )}
             </div>
         )
     }
-
 }
 
-const ReadingCard = ({ readings }) => (
-    <CardDeck>
-        <Card>
-            <Card.Body>
-                <Row>
-                    <Col>
-                        <Card.Subtitle className="mb-2 text-muted">Temperature</Card.Subtitle>
-                        <Card.Title>{readings.temperature}</Card.Title>
-                    </Col>
-                    <Col md="auto">
-                        <Button variant="danger" className={Style.btnCircle}><i class="fas fa-thermometer-half" /></Button>
-                    </Col>
-                </Row>
-            </Card.Body>
-            <Card.Footer>
-                <small className="text-muted">Last updated at {readings.timestamp}</small>
-            </Card.Footer>
-        </Card>
-        <Card>
-            <Card.Body>
-                <Row>
-                    <Col>
-                        <Card.Subtitle className="mb-2 text-muted">Humidity</Card.Subtitle>
-                        <Card.Title>{readings.humidity}</Card.Title>
-                    </Col>
-                    <Col md="auto">
-                        <Button variant="warning" className={Style.btnCircle}><i class="fab fa-cloudsmith" /></Button>
-                    </Col>
-                </Row>
-            </Card.Body>
-            <Card.Footer>
-                <small className="text-muted">Last updated at {readings.timestamp}</small>
-            </Card.Footer>
-        </Card>
-        <Card>
-            <Card.Body>
-                <Row>
-                    <Col>
-                        <Card.Subtitle className="mb-2 text-muted">Soil Moisture</Card.Subtitle>
-                        <Card.Title>{readings.timestamp}</Card.Title>
-                    </Col>
-                    <Col md="auto">
-                        <Button variant="success" className={Style.btnCircle}><i class="fas fa-tint" /></Button>
-                    </Col>
-                </Row>
-            </Card.Body>
-            <Card.Footer>
-                <small className="text-muted">Last updated at {readings.timestamp}</small>
-            </Card.Footer>
-        </Card>
-        <Card>
-            <Card.Body>
-                <Row>
-                    <Col>
-                        <Card.Subtitle className="mb-2 text-muted">Heat Index</Card.Subtitle>
-                        <Card.Title>{readings.timestamp}</Card.Title>
-                    </Col>
-                    <Col md="auto">
-                        <Button variant="info" className={Style.btnCircle}><i class="fas fa-tachometer-alt" /></Button>
-                    </Col>
-                </Row>
-            </Card.Body>
-            <Card.Footer>
-                <small className="text-muted">Last updated at {readings.timestamp}</small>
-            </Card.Footer>
-        </Card>
-    </CardDeck>
-);
+
+const ReadingCard = ({ readings }) => {
+    let date = new Date(readings.timestamp * 1000);
+    let dateTime = date.toLocaleTimeString();
+    return (
+        <CardDeck>
+            <Card>
+                <Card.Body>
+                    <Row>
+                        <Col>
+                            <Card.Subtitle className="mb-2 text-muted">Temperature</Card.Subtitle>
+                            <Card.Title>{readings.temperature && readings.temperature.toFixed(2)}°C</Card.Title>
+                        </Col>
+                        <Col md="auto">
+                            <Button variant="danger" className={Style.btnCircle}><i class="fas fa-thermometer-half" /></Button>
+                        </Col>
+                    </Row>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">Last updated at {dateTime}</small>
+                </Card.Footer>
+            </Card>
+            <Card>
+                <Card.Body>
+                    <Row>
+                        <Col>
+                            <Card.Subtitle className="mb-2 text-muted">Humidity</Card.Subtitle>
+                            <Card.Title>{readings.humidity && readings.humidity.toFixed(2)}%</Card.Title>
+                        </Col>
+                        <Col md="auto">
+                            <Button variant="warning" className={Style.btnCircle}><i class="fab fa-cloudsmith" /></Button>
+                        </Col>
+                    </Row>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">Last updated at {dateTime}</small>
+                </Card.Footer>
+            </Card>
+            <Card>
+                <Card.Body>
+                    <Row>
+                        <Col>
+                            <Card.Subtitle className="mb-2 text-muted">Soil Moisture</Card.Subtitle>
+                            <Card.Title>{readings.soil && readings.soil.toFixed(2)}%</Card.Title>
+                        </Col>
+                        <Col md="auto">
+                            <Button variant="success" className={Style.btnCircle}><i class="fas fa-tint" /></Button>
+                        </Col>
+                    </Row>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">Last updated at {dateTime}</small>
+                </Card.Footer>
+            </Card>
+            <Card>
+                <Card.Body>
+                    <Row>
+                        <Col>
+                            <Card.Subtitle className="mb-2 text-muted">Heat Index</Card.Subtitle>
+                            <Card.Title>{readings.heatIndex && readings.heatIndex.toFixed(2)}°C</Card.Title>
+                        </Col>
+                        <Col md="auto">
+                            <Button variant="info" className={Style.btnCircle}><i class="fas fa-tachometer-alt" /></Button>
+                        </Col>
+                    </Row>
+                </Card.Body>
+                <Card.Footer>
+                    <small className="text-muted">Last updated at {dateTime}</small>
+                </Card.Footer>
+            </Card>
+        </CardDeck>
+    );
+}
 
 const Sensors = withFirebase(SensorsBase);
 

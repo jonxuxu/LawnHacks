@@ -5,12 +5,12 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
-#define DHTPIN 2     // Digital pin connected to the DHT sensor (D4)
+#define DHTPIN D4     // Digital pin connected to the DHT sensor
 #define DHTTYPE    DHT22     // DHT 22 (AM2302)
 DHT dht(DHTPIN, DHTTYPE);
 #define SOILPIN A0 // Analog pin reading soil moisture data
-#define SOILPWR 4 // Pin that powers soil sensor (D2)
-#define VALVEPIN 5 // Digital pin controlling the solenoid valve (D1)
+#define SOILPWR D2 // Pin that powers soil sensor
+#define VALVEPIN D0 // Digital pin controlling the solenoid valve
 int valve = 0; // 0 for closed
 
 #define NTP_ADDRESS  "europe.pool.ntp.org"
@@ -57,7 +57,7 @@ void readFb(){
   }
 }
 
-void writeFb(double temp, double humid, double soil){
+void writeFb(double temp, double humid, double heatIndex, double soil){
   timeClient.update();
   String epochTime =  String(timeClient.getEpochTime());
   
@@ -65,6 +65,7 @@ void writeFb(double temp, double humid, double soil){
   json.set("timestamp", epochTime);
   json.set("temperature", temp);
   json.set("humidity", humid);
+  json.set("heatIndex", heatIndex);
   json.set("soil", soil);
   json.set("valve", valve);
   
@@ -119,6 +120,8 @@ void loop() {
     Serial.println(F("Failed to read from DHT sensor!"));
     return;
   }
+  double hi = dht.computeHeatIndex(t, h, false);
+  
   digitalWrite(SOILPWR, HIGH);
   delay(100);
   double s = (100-((analogRead(A0)-85)/320.0*100)); // Relative percentage of "wetness" (0 is dry, 100 is saturated, around 50 is what we need)
@@ -128,11 +131,12 @@ void loop() {
   Serial.print(h);
   Serial.print("%  Temperature: ");
   Serial.print(t);
-  Serial.print("°C ");
-  Serial.print("Soil: ");
+  Serial.print("°C Heat index: ");
+  Serial.print(hi);
+  Serial.print(" Soil: ");
   Serial.print(s);
-  Serial.println("% ");
+  Serial.println("%");
 
   readFb();
-  writeFb(t, h, s);
+  writeFb(t, h, hi, s);
 }
